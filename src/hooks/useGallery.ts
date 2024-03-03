@@ -18,12 +18,12 @@ const useGalleryWithCache = (initialPage: number = 1) => {
   const { images, setImages } = useImages();
   const { queries, setQueries } = useQueries(); 
 
-  const fetchImages = async (query: string) => {
+  const fetchImages = async (pageNum: number, query: string) => {
     setLoading(true);
     setError(false);
 
     try {
-      const fetchedImages: Image[] = await fetchGallery(pageNumber, NUMBER_OF_IMAGES_PER_PAGE, query);
+      const fetchedImages: Image[] = await fetchGallery(pageNum, NUMBER_OF_IMAGES_PER_PAGE, query);
       setImages(prev => [...prev, ...fetchedImages]);
       setQueries(prevQueries => [...new Set([query, ...prevQueries])]);
     } catch (err) {
@@ -39,9 +39,25 @@ const useGalleryWithCache = (initialPage: number = 1) => {
       setImages(JSON.parse(cachedImagesForQuery));
       setLoading(false);
     } else {
-      fetchImages(query);
+      fetchImages(pageNumber, query);
     }
   }, [pageNumber, query]);
+
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop ===
+      document.documentElement.offsetHeight
+    ) {
+      goToNextPage();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const goToNextPage = () => {
     setPageNumber(current => current + 1);
@@ -52,7 +68,7 @@ const useGalleryWithCache = (initialPage: number = 1) => {
     setPageNumber(1); 
   };
 
-  return { loading, error, images, goToNextPage, handleSearch };
+  return { loading, error, images, handleSearch };
 };
 
 export default useGalleryWithCache;

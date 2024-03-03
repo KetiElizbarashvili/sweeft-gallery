@@ -11,7 +11,6 @@ interface ImageModalProps {
 const ImageModal: React.FC<ImageModalProps> = ({ imageUrl, viewsCount, likesCount, onClose }) => {
 
   const handleDownload = () => {
-    // Replace this with your download logic, for example:
     window.open(imageUrl, '_blank');
   };
 
@@ -20,7 +19,6 @@ const ImageModal: React.FC<ImageModalProps> = ({ imageUrl, viewsCount, likesCoun
     if (popupWindow) {
       popupWindow.document.write(`<img src="${imageUrl}" alt="Full Image" />`);
     } else {
-      // Handle the case where popup blocking is enabled
       console.error('Popup blocked!');
     }
   };
@@ -32,7 +30,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ imageUrl, viewsCount, likesCoun
           Close
         </button>
         <div className="image-container">
-          <img src={imageUrl} alt="Full Image" onClick={openImageInPopup} /> {/* Open the image in a popup window when clicked */}
+          <img src={imageUrl} alt="Full Image" onClick={openImageInPopup} />
           <button className="download-button" onClick={handleDownload}>Download</button>
         </div>
         <div className="modal-details">
